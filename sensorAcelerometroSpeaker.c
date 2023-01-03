@@ -1,30 +1,31 @@
-const int speakerPin = 8; // pin for the speaker
-const int xPin = A0; // pin for the x-axis of the accelerometer
-const int yPin = A1; // pin for the y-axis of the accelerometer
-const int zPin = A2; // pin for the z-axis of the accelerometer
+//Defenir pinos do speaker e do acelerometro
+const int speakerPin = 8; 
+const int xPin = A0; 
+const int yPin = A1; 
+const int zPin = A2; 
 
-const int unwantedAngle = 45; // the unwanted angle threshold, in degrees
-const int beepDuration = 100; // the duration of each beep, in milliseconds
-const int beepPause = 50; // the pause between each beep, in milliseconds
-const int beepCount = 3; // the number of beeps to give
+const int unwantedAngle = 45; // Defenmir o angulo indesejado, em graus
+const int beepDuration = 100; // Defenir a duração dos bips em milisegundos
+const int beepPause = 50; // Defenir a pausa entre bips em milisegundos
+const int beepCount = 5; // o numero de bips que da
 
 void setup() {
-  // initialize the speaker pin as an output
+  // iniciar o pino do speaker como output
   pinMode(speakerPin, OUTPUT);
 }
 
 void loop() {
-  // read the x, y, and z values from the accelerometer
+  // ler o valor de x,y,z do acelerometro 
   int x = analogRead(xPin);
   int y = analogRead(yPin);
   int z = analogRead(zPin);
 
-  // calculate the angle from the x, y, and z values
+  // calcular o angulo a partir dos valores x,y e z
   float angle = atan2(y, x) * 180 / PI;
 
-  // check if the angle is unwanted
+  // ver se o angulo é indesejado
   if (abs(angle) > unwantedAngle) {
-    // give a few beeps to alert the user
+    // dar uns bips para alertar o utilizador
     for (int i = 0; i < beepCount; i++) {
       digitalWrite(speakerPin, HIGH);
       delay(beepDuration);
