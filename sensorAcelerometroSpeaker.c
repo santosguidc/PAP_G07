@@ -1,12 +1,12 @@
-//Defenir pinos do speaker e do acelerometro
+//Definir pinos do speaker e do acelerometro
 const int speakerPin = 8; 
 const int xPin = A0; 
 const int yPin = A1; 
 const int zPin = A2; 
 
-const int unwantedAngle = 45; // Defenmir o angulo indesejado, em graus
-const int beepDuration = 100; // Defenir a duração dos bips em milisegundos
-const int beepPause = 50; // Defenir a pausa entre bips em milisegundos
+const int unwantedAngle = 45; // Definir o angulo indesejado, em graus
+const int beepDuration = 100; // Definir a duração dos bips em milisegundos
+const int beepPause = 50; // Definir a pausa entre bips em milisegundos
 const int beepCount = 5; // o numero de bips que da
 
 void setup() {
