@@ -3,18 +3,18 @@
 
 
 
-// defenir as variáveis para os sensor e motor esquerdo
+// definir as variáveis para os sensor e motor esquerdo
 const int trigSLPin = 12;
 const int echoSLPin = 13;
 const int VLPin = 11;
 
-// defenir variáveis para os sensor e motor da frente
+// definir variáveis para os sensor e motor da frente
 
 const int trigSFPin = 7;
 const int echoSFPin = 8;
 const int VFPin = 10;
 
-// defenir variáveis para o sensor e motor direito
+// definir variáveis para o sensor e motor direito
 
 const int trigSRPin = 2;
 const int echoSRPin = 4;
