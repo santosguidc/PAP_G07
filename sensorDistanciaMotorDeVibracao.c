@@ -1,145 +1,82 @@
-#define echoPin 2 
-#define trigPin 3 
+//Definir os pinos dos sensores
+#define TRIG_LEFT 8
+#define ECHO_LEFT 9
+#define TRIG_FRONT 10
+#define ECHO_FRONT 11
+#define TRIG_RIGHT 12
+#define ECHO_RIGHT 13
 
+//Definir o pino do motor de vibração
+#define VIBRATION_MOTOR 7
 
+//Definir a distância máxima
+#define MAX_DISTANCE 200
 
-// definir as variáveis para os sensor e motor esquerdo
-const int trigSLPin = 12;
-const int echoSLPin = 13;
-const int VLPin = 11;
+//Definir as distâncias
+#define DISTANCE_80CM 80
+#define DISTANCE_1_2M 120
+#define DISTANCE_1_6M 160
 
-// definir variáveis para os sensor e motor da frente
+//Definir as vibrações
+#define VIBRATION_COUNT6 6
+#define VIBRATION_COUNT4 4
+#define VIBRATION_COUNT2 2
+#define VIBRATION_COUNT1 1
 
-const int trigSFPin = 7;
-const int echoSFPin = 8;
-const int VFPin = 10;
+//Definir as frequências
+#define FREQ_3HZ 3
+#define FREQ_2HZ 2
+#define FREQ_1HZ 1
 
-// definir variáveis para o sensor e motor direito
-
-const int trigSRPin = 2;
-const int echoSRPin = 4;
-const int VRPin = 9;
-
-long durationSL;
-long durationSF;
-long durationSR;
-float distanceCmSL;
-float distanceCmSF; 
-float distanceCmSR; 
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>SETUP<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-void setup()
-{
-  pinMode(trigSLPin, OUTPUT); 
-  pinMode(echoSLPin, INPUT);
-  pinMode(VLPin, OUTPUT);
-  digitalWrite(VLPin, LOW);
-  
-  pinMode(trigSFPin, OUTPUT);
-  pinMode(echoSFPin, INPUT);
-  pinMode(VFPin, OUTPUT);
-  digitalWrite(VFPin, LOW);
-  
-  pinMode(trigSRPin, OUTPUT);
-  pinMode(echoSRPin, INPUT);
-  pinMode(VRPin, OUTPUT);
-  digitalWrite(VRPin, LOW);
-  
-  digitalWrite(3, LOW);
-  digitalWrite(5, LOW);
-  digitalWrite(6, LOW);
-
-  Serial.begin(9600); 
-  Serial.println("Ultrasonic Sensor HC-SR04 Test"); 
-  Serial.println("with Arduino UNO R3");
+void setup() {
+  //Definir os input e output
+  pinMode(TRIG_LEFT, OUTPUT);
+  pinMode(ECHO_LEFT, INPUT);
+  pinMode(TRIG_FRONT, OUTPUT);
+  pinMode(ECHO_FRONT, INPUT);
+  pinMode(TRIG_RIGHT, OUTPUT);
+  pinMode(ECHO_RIGHT, INPUT);
+  pinMode(VIBRATION_MOTOR, OUTPUT);
 }
 
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>LOOP<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-void loop() 
-{
-  
-  digitalWrite(trigSLPin, LOW);
+//Função para calcular a distância
+long measure_distance(int trig, int echo) {
+  digitalWrite(trig, LOW);
   delayMicroseconds(2);
-  digitalWrite(trigSLPin, HIGH);
+  digitalWrite(trig, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigSLPin, LOW);
-  durationSL = pulseIn(echoSLPin, HIGH);
-  
-  distanceCmSL = durationSL * 0.034 / 2;
-  
-  digitalWrite(trigSFPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigSFPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigSFPin, LOW);
-  durationSF = pulseIn(echoSFPin, HIGH);
-  
-  distanceCmSF = durationSF * 0.034 / 2;
+  digitalWrite(trig, LOW);
 
-  digitalWrite(trigSRPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigSRPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigSRPin, LOW);
-  durationSR = pulseIn(echoSRPin, HIGH);
-   
-  distanceCmSR = durationSR * 0.034 / 2;
+  long duration = pulseIn(echo, HIGH);
+  long distance = (duration / 2) / 29.1;
 
-  Serial.print("Distance: ");
-  Serial.println(distanceCmSL);
-  Serial.println(distanceCmSF);
-  Serial.println(distanceCmSR);
-  Serial.println(" cm");
-  
-//>>>>>>>>>>>>>>>ESQUERDA<<<<<<<<<<<<<<<
-  
-  if ( distanceCmSL < 300)
-  {
-    digitalWrite(VLPin, HIGH);
-        digitalWrite(3,HIGH);
-
-  }
-  
-  else
-  {
-    digitalWrite(VLPin, LOW);
-        digitalWrite(3,LOW);
-
-  }
-  
-//>>>>>>>>>>>>>>>FRENTE<<<<<<<<<<<<<<<
-  
-  if ( distanceCmSF < 300)
-  {
-    digitalWrite(VFPin, HIGH);
-    digitalWrite(5,HIGH);
-  }
-  
-  else
-  {
-    digitalWrite(VFPin, LOW);
-        digitalWrite(5,LOW);
-
-  }
-    
-//>>>>>>>>>>>>>>>DIREITA<<<<<<<<<<<<<<<
-  
-  if ( distanceCmSR < 300)
-  {
-    digitalWrite(VRPin, HIGH);
-        digitalWrite(6,HIGH);
-  }
-  
-  else
-  {
-    digitalWrite(VRPin, LOW);
-    digitalWrite(6,LOW);
-  }
-  
+  return distance;
 }
 
+//Função para vibrar caso a distancia seja menor que G/S/L
+void vibrate(int freq, int count) {
+  for (int i = 0; i < count; i++) {
+    tone(VIBRATION_MOTOR, freq);
+    delay(500);
+    noTone(VIBRATION_MOTOR);
+    delay(500);
+  }
+}
 
+void loop() {
+  
+  
+  // 1 Situação
+  int left_distance = measure_distance(TRIG_LEFT, ECHO_LEFT);
+  int front_distance = measure_distance(TRIG_FRONT, ECHO_FRONT);
+  if (left_distance < DISTANCE_80CM && front_distance < DISTANCE_80CM) {
+    vibrate(FREQ_3HZ, VIBRATION_COUNT6);
+  }
+  else if (left_distance < DISTANCE_1_2M && front_distance < DISTANCE_1_2M) {
+    vibrate(FREQ_2HZ, VIBRATION_COUNT6);
+  }
+  else if (left_distance < DISTANCE_1_6M && front_distance < DISTANCE_1_6M) {
+    vibrate(FREQ_1HZ, VIBRATION_COUNT6);
+  }
 
+}
