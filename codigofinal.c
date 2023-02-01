@@ -49,7 +49,7 @@ void setup() {
   delayCounter = 0;           // Inicializa o contador de espera como 0
   quadranteDecidido = 11;     // Descodifica o quadrante ... e inicia a vibração correspondente
 }
-
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<INICIO DO LOOP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void loop() {
   currentOneSTimer = millis();         // Atualiza o valor do currentOneSTimer a cada interação do loop
   vibrationDecode(quadranteDecidido);  // Descodifica o quadrante ... e inicia a vibração correspondente
@@ -57,44 +57,61 @@ void loop() {
   sensorF = sonarF.convert_cm(sonarF.ping_median(MEDIAN_TIMES));
   sensorD = sonarD.convert_cm(sonarD.ping_median(MEDIAN_TIMES));
 }
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<FIM DO LOOP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 int decideQuadrante() {
 
+  //Verificar se a leitura do sensorE é 0 e defini-lo como 400 se for
   if (sensorE == 0) {
     sensorE = 400;
   }
+  
+  //Verificar se a leitura do sensorD é 0 e defini-lo como 400 se for
   if (sensorD == 0) {
     sensorD = 400;
   }
+  
+  //Verificar se a leitura do sensorF é 0 e defini-lo como 400 se for
   if (sensorF == 0) {
     sensorF = 400;
   }
-
+  
+  //Criar variáveis para armazenar as leituras dos sensores
   int E = sensorE;
   int EF = (sensorE + sensorF) / 2;
   int DF = (sensorD + sensorF) / 2;
   int D = sensorD;
-
+  
+  //Variável para armazenar a leitura do sensor mais baixa
   int lowest = 400;
+  //Variável para armazenar a fatia do quadrante
   int slice = 0;
-
+  
+  //Verificar se E é a leitura mais baixa e armazenar a fatia na variável
   if (E < lowest) {
     lowest = E;
     slice = 10;
   }
+  
+  //Verificar se EF é a leitura mais baixa e armazenar a fatia na variável
   if (EF < lowest) {
     lowest = EF;
     slice = 20;
   }
+  
+  //Verificar se DF é a leitura mais baixa e armazenar a fatia na variável
   if (DF < lowest) {
     lowest = DF;
     slice = 30;
   }
+  
+  //Verificar se D é a leitura mais baixa e armazenar a fatia na variável
   if (D < lowest) {
     lowest = D;
     slice = 40;
   }
-
+  
+  //Verificar o intervalo da leitura mais baixa e adicionar o número correspondente a fatia
   if (lowest < 80) {
     slice += 1;
   } else if (lowest < 120) {
@@ -157,9 +174,9 @@ void vibrationDecode(int quadrante) {  // Descodifica o quadrante e inicia a vib
   }
 }
 
-void vibrate(int first, int second, int third = -1, int forth = -1) {
+void vibrate(int first, int second, int third = -1, int forth = -1) {  //Função para vibrar o motor
 
-  if (counter == 0) {
+  if (counter == 0) { // Verifica o valor da variavel counter
     switch (first) {
       case 0:  // Small Vibration
         smallVibration();
@@ -172,35 +189,39 @@ void vibrate(int first, int second, int third = -1, int forth = -1) {
     }
   }
 
+  // Verifica se a diferença entre `currentOneSTimer` e `OneSTimer` é maior ou igual a `delayCounter`
+  // e se o valor de `counter` é igual a 1
   if ((currentOneSTimer - OneSTimer >= delayCounter) && (counter == 1)) {
-    switch (second) {
-      case 0:  // Small Vibration
+    switch (second) {             // Verifica o valor de `second`
+      case 0:                     // Small Vibration
         smallVibration();
         break;
-      case 1:  // Long Vibration
+      case 1:                    // Long Vibration
         longVibration();
         break;
-      default:  // Não Reconhecido
+      default:                   // Não Reconhecido
         break;
     }
   }
-
+  // Verifica se a diferença entre `currentOneSTimer` e `OneSTimer` é maior ou igual a `delayCounter`
+  // e se o valor de `counter` é igual a 2
   if ((currentOneSTimer - OneSTimer >= delayCounter) && (counter == 2)) {
-    switch (third) {
-      case 0:  // Small Vibration
+    switch (third) {          // Verifica o valor de `third`
+      case 0:                 // Small Vibration
         smallVibration();
         break;
-      case 1:  // Long Vibration
+      case 1:                 // Long Vibration
         longVibration();
         break;
-      default:  // Não Reconhecido
+      default:                // Não Reconhecido
         counter++;
         break;
     }
   }
-
+  // Verifica se a diferença entre `currentOneSTimer` e `OneSTimer` é maior ou igual a `delayCounter`
+  // e se o valor de `counter` é igual a 3
   if ((currentOneSTimer - OneSTimer >= delayCounter) && (counter == 3)) {
-    switch (forth) {
+    switch (forth) { // Verifica o valor de `forth`
       case 0:  // Small Vibration
         smallVibration();
         break;
@@ -208,14 +229,17 @@ void vibrate(int first, int second, int third = -1, int forth = -1) {
         longVibration();
         break;
       default:  // Não Reconhecido
-        counter++;
+        counter++; //Adiciona mais 1 á variável
         break;
     }
   }
-
+  
+// Verifica se a diferença entre `currentOneSTimer` e `OneSTimer` é maior ou igual a 2000
   if (currentOneSTimer - OneSTimer >= 2000) {
-    counter = 0;
+    counter = 0;  // Reseta o valor de `counter` para 0
     delayCounter = 0;
+    
+    
     Serial.println("===============");
     Serial.println("reset");
     quadranteDecidido = decideQuadrante();
@@ -234,13 +258,20 @@ void vibrate(int first, int second, int third = -1, int forth = -1) {
 }
 
 void smallVibration() {
+  
+  // Toca uma frequência 1000 Hz no  motor
   tone(motorPin, 1000, SMALL_VIBRATION_TIME);
+  // Acrescenta um ao contador
   counter++;
+  // Acrescenta o delayCounter pela soma de SMALL_VIBRATION_TIME e DEFAULT_WAIT_TIME
   delayCounter += SMALL_VIBRATION_TIME + DEFAULT_WAIT_TIME;
 }
 
 void longVibration() {
+  // Toca uma frequência 1000 Hz no  motor
   tone(motorPin, 1000, LONG_VIBRATION_TIME);
+  // Acrescenta um ao contador
   counter++;
+  // Acrescenta o delayCounter pela soma de LONG_VIBRATION_TIME e DEFAULT_WAIT_TIME
   delayCounter += LONG_VIBRATION_TIME + DEFAULT_WAIT_TIME;
 }
